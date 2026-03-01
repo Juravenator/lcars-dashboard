@@ -1,5 +1,5 @@
 import { context } from "./canvas";
-import { getColor, unit_gap, unit_height, unit_width } from "./theme";
+import { getColor, randColorNr, unit_gap, unit_height, unit_width } from "./theme";
 import { MenuEntry } from "./types";
 
 // let showHighlights = false;
@@ -22,3 +22,9 @@ export const drawButton = (b: MenuEntry, x: number, y: number, {h = unit_height,
 
     return mih + unit_gap;
 }
+
+export const intoMenuEntry = (mi: any) => {
+    mi.color = mi.color || randColorNr();
+    mi.height = mi.height || 1;
+    return mi as MenuEntry;
+};

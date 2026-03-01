@@ -1,8 +1,10 @@
 import 'audioContext-polyfill';
 import { canvas, clearCanvas } from "./canvas";
 import { MainMenu } from './cells/main-menu';
-import { randColorNr } from './theme';
-import { MenuEntry } from './types';
+import { intoMenuEntry } from './tools';
+import { Xserve } from './cells/xserve';
+import { CellInput } from './cells/cell';
+import { CERN } from './cells/cern';
 
 window.requestAnimationFrame =
   window.requestAnimationFrame ||
@@ -25,15 +27,13 @@ const menu = [{
 }, {
   name: "xServe",
   height: 2,
+  cell: (input: CellInput) => new Xserve(input),
 }, {
   name: "CERN",
+  cell: (input: CellInput) => new CERN(input),
 }, {
   name: "space",
-}].map((mi: any) => {
-    mi.color = randColorNr();
-    mi.height = mi.height || 1;
-    return mi as MenuEntry;
-});
+}].map(intoMenuEntry);
 
 const mainMenu = new MainMenu({
     x: 0, y: 0, w: canvas.width, h: canvas.height,

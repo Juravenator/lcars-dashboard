@@ -1,8 +1,8 @@
-import { Cell } from "./cells/cell";
+import { Cell, CellInput } from "./cells/cell";
 
 export interface MenuEntry {
     height: number;
     color: number;
-    cell?: Cell;
+    cell?: (input: CellInput) => Cell;
     name?: string;
 }
