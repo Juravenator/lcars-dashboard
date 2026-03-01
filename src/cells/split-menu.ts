@@ -36,8 +36,10 @@ export class SplitMenu extends Cell {
             current_y += mih + unit_gap;
         }
 
+        const middlebarHeight = (unit_height - unit_gap) / 2;
         const innerArc = unit_height + unit_gap;
-        const outerArc = innerArc + unit_height / 2;
+        const outerArc = innerArc + middlebarHeight;
+
         /* top arc */
         {
             context.fillStyle = getColor(this.topArchNr);
@@ -51,7 +53,7 @@ export class SplitMenu extends Cell {
                 this.x + unit_width + innerArc, current_y + innerArc,
                 innerArc,
             );
-            current_y += innerArc + unit_height / 2;
+            current_y += innerArc + middlebarHeight;
             context.lineTo(this.x + unit_width + innerArc, current_y);
             context.lineTo(this.x + outerArc, current_y);
             context.arcTo(
@@ -61,18 +63,19 @@ export class SplitMenu extends Cell {
             );
             context.closePath();
             context.fill();
-            context.fillRect(this.x + unit_width + innerArc, current_y - unit_height / 2, this.w - unit_width - innerArc, unit_height / 2);
+            context.fillRect(this.x + unit_width + innerArc, current_y - middlebarHeight, this.w - unit_width - innerArc, middlebarHeight);
+            current_y += unit_gap;
         }
         /* bottom arc */
         {
             context.fillStyle = getColor(this.mainArchNr);
-            context.fillRect(this.x + unit_width + innerArc, current_y, this.w - unit_width - innerArc, unit_height / 2);
+            context.fillRect(this.x + unit_width + innerArc, current_y, this.w - unit_width - innerArc, middlebarHeight);
             context.beginPath();
             context.moveTo(this.x + unit_width + innerArc, current_y);
-            context.lineTo(this.x + unit_width + innerArc, current_y + unit_height / 2);
+            context.lineTo(this.x + unit_width + innerArc, current_y + middlebarHeight);
             context.arcTo(
-                this.x + unit_width, current_y + unit_height / 2,
-                this.x + unit_width, current_y + unit_height / 2 + innerArc,
+                this.x + unit_width, current_y + middlebarHeight,
+                this.x + unit_width, current_y + middlebarHeight + innerArc,
                 innerArc
             );
             context.lineTo(this.x, current_y + outerArc);
