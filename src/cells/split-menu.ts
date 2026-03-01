@@ -1,5 +1,6 @@
 import { context } from "../canvas";
 import { getColor, randColorNr, unit_gap, unit_height, unit_width } from "../theme";
+import { drawButton } from "../tools";
 import { MenuEntry } from "../types";
 import { Cell } from "./cell";
 
@@ -25,10 +26,7 @@ export class SplitMenu extends Cell {
         let current_y = this.y;
 
         for (const mi of this.topMenu) {
-            context.fillStyle = getColor(mi.color);
-            const mih = (unit_height * mi.height) + (unit_gap * (mi.height - 1));
-            context.fillRect(this.x, current_y, unit_width, mih);
-            current_y += mih + unit_gap;
+            current_y += drawButton(mi, this.x, current_y);
         }
 
         const middlebarHeight = (unit_height - unit_gap) / 2;
@@ -87,14 +85,10 @@ export class SplitMenu extends Cell {
         }
 
         for (const mi of this.mainMenu) {
-            context.fillStyle = getColor(mi.color);
-            const mih = (unit_height * mi.height) + (unit_gap * (mi.height - 1));
-            context.fillRect(this.x, current_y, unit_width, mih);
-            current_y += mih + unit_gap;
+            current_y += drawButton(mi, this.x, current_y);
         }
         if (current_y < this.y + this.h) {
-            context.fillStyle = getColor(this.mainFillerNr);
-            context.fillRect(this.x, current_y, unit_width, this.y + this.h - current_y);
+            drawButton({height: 1, color: this.mainFillerNr}, this.x, current_y, this.y + this.h - current_y);
         }
     }
 

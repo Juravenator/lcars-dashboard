@@ -13,24 +13,22 @@ window.requestAnimationFrame =
 const menu = [{
   height: 2,
 },{
-  name: "registration",
+  name: "alerts",
   height: 2,
 }, {
-  name: "operations",
+  name: "home",
 }, {
-  name: "security",
+  name: "calendar",
 }, {
-  name: "science",
+  name: "weather",
   height: 2,
 }, {
-  name: "command",
+  name: "system",
+  height: 2,
 }, {
-  name: "engineering",
+  name: "CERN",
 }, {
-  name: "map",
-}, {
-  name: "info",
-}, {
+  name: "space",
 }].map((mi: any) => {
     mi.color = randColorNr();
     mi.height = mi.height || 1;

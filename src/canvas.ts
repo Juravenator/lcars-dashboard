@@ -1,14 +1,13 @@
 export const canvas = document.querySelector("#main")! as HTMLCanvasElement;
 export const context = canvas.getContext('2d')!;
 
-let screenColor = 0;
-
 const init = () => {
     const w = window.innerWidth;
     const h = window.innerHeight;
     canvas.width = w;
     canvas.height = h;
     context.lineWidth = 1;
+    context.textRendering = 'optimizeLegibility';
 }
 init();
 addEventListener('resize', () => init())
