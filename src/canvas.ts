@@ -2,8 +2,8 @@ export const canvas = document.querySelector("#main")! as HTMLCanvasElement;
 export const context = canvas.getContext('2d')!;
 
 const init = () => {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
+    const w = window.innerWidth * window.devicePixelRatio;
+    const h = window.innerHeight * window.devicePixelRatio;
     canvas.width = w;
     canvas.height = h;
     context.lineWidth = 1;
