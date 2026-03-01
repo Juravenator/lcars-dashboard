@@ -88,7 +88,7 @@ export class SplitMenu extends Cell {
             current_y += drawButton(mi, this.x, current_y);
         }
         if (current_y < this.y + this.h) {
-            drawButton({height: 1, color: this.mainFillerNr}, this.x, current_y, this.y + this.h - current_y);
+            drawButton({height: 1, color: this.mainFillerNr}, this.x, current_y, {h: this.y + this.h - current_y});
         }
     }
 

@@ -9,7 +9,7 @@ export class MainMenu extends Cell {
 
   menu: MenuEntry[];
 
-  private currentComponent: Cell | null = null;
+  private currentCell: string | undefined;
   private componentCache: {[key: string]: Cell} = {};
   private bottomFillNr = randColorNr();
 
@@ -26,20 +26,21 @@ export class MainMenu extends Cell {
     }],
   });
 
-  constructor(input: CellInput & {menu: MenuEntry[]}) {
+  constructor(input: CellInput & {menu: MenuEntry[], active?: string}) {
     super(input);
     this.menu = input.menu;
+    this.currentCell = input.menu.filter(mi => input.active ? mi.name == input.active : mi.name)[0]?.name;
   }
 
   frame() {
     let current_y = this.y;
     
     for (const mi of this.menu) {
-        current_y += drawButton(mi, this.x, current_y);
+        current_y += drawButton(mi, this.x, current_y, {highlight: mi.name == this.currentCell});
     }
 
     if (current_y < this.y + this.h) {
-      drawButton({height: 1, color: this.bottomFillNr}, this.x, current_y, this.y + this.h - current_y);
+      drawButton({height: 1, color: this.bottomFillNr}, this.x, current_y, {h: this.y + this.h - current_y});
     }
 
     this.splitMenu.frame();

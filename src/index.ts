@@ -23,7 +23,7 @@ const menu = [{
   name: "weather",
   height: 2,
 }, {
-  name: "system",
+  name: "xServe",
   height: 2,
 }, {
   name: "CERN",
@@ -37,7 +37,7 @@ const menu = [{
 
 const mainMenu = new MainMenu({
     x: 0, y: 0, w: canvas.width, h: canvas.height,
-    menu
+    menu, active: "xServe"
 });
 
 let frame_t: number | undefined;

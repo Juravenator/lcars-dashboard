@@ -2,8 +2,13 @@ import { context } from "./canvas";
 import { getColor, unit_gap, unit_height, unit_width } from "./theme";
 import { MenuEntry } from "./types";
 
-export const drawButton = (b: MenuEntry, x: number, y: number, h = unit_height, w = unit_width) => {
-    context.fillStyle = getColor(b.color);
+// let showHighlights = false;
+// setInterval(() => {
+//     showHighlights = !showHighlights;
+// }, 500);
+
+export const drawButton = (b: MenuEntry, x: number, y: number, {h = unit_height, w = unit_width, highlight = false} = {}) => {
+    context.fillStyle = getColor(b.color, highlight);
     const mih = (h * b.height) + (unit_gap * (b.height - 1));
     context.fillRect(x, y, w, mih);
 
