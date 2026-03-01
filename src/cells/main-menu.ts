@@ -2,6 +2,7 @@ import { context } from "../canvas";
 import { playOnce } from "../sound";
 import { getColor, randColorNr, unit_gap, unit_height, unit_width } from "../theme";
 import { Cell } from "./cell";
+import { SplitMenu } from "./split-menu";
 
 const menu = [{
   height: 2,
@@ -43,9 +44,25 @@ const menu = [{
 //   component: HomeMenu,
 }, {
   c: randColorNr(),
-}]
+}];
 
 export class MainMenu extends Cell {
+
+  private currentComponent: Cell | null = null;
+  private componentCache: {[key: string]: Cell} = {};
+
+  private splitMenu = new SplitMenu({
+    x: this.x + unit_width + unit_gap, y: this.y,
+    w: this.w - unit_width - unit_gap, h: this.h,
+    topMenu: [{
+      height: 3,
+      color: randColorNr(),
+    }],
+    mainMenu: [{
+      height: 3,
+      color: randColorNr(),
+    }],
+  });
 
   frame() {
     let current_y = this.y;
@@ -53,13 +70,16 @@ export class MainMenu extends Cell {
     for (const mi of menu) {
         context.fillStyle = getColor(mi.c);
         if (mi.name || mi.height) {
-          const mih = unit_height * (mi.height || 1);
+          mi.height = mi.height || 1;
+          const mih = (unit_height * mi.height) + (unit_gap * (mi.height - 1));
           context.fillRect(this.x, current_y, unit_width, mih);
-          current_y += (mih) + unit_gap;
+          current_y += mih + unit_gap;
         } else {
-          context.fillRect(this.x, current_y, unit_width, this.h-current_y);
+          context.fillRect(this.x, current_y, unit_width, this.y + this.h - current_y);
         }
     }
+
+    this.splitMenu.frame();
   }
 
   click(rootx: number, rooty: number): boolean {

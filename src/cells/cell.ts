@@ -4,11 +4,11 @@ export abstract class Cell {
     w: number;
     h: number;
 
-    constructor(x: number, y: number, w: number, h: number) {
-        this.x = x;
-        this.y = y;
-        this.w = w;
-        this.h = h;
+    constructor(input: {x: number, y: number, w: number, h: number}) {
+        this.x = input.x;
+        this.y = input.y;
+        this.w = input.w;
+        this.h = input.h;
     }
 
     abstract frame(): void;

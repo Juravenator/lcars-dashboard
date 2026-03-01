@@ -8,7 +8,7 @@ window.requestAnimationFrame =
   (window as any).mozRequestAnimationFrame ||
   function (cb) { return setTimeout(cb, 1000/60); };
 
-const mainMenu = new MainMenu(0, 0, canvas.width, canvas.height);
+const mainMenu = new MainMenu({x: 0, y: 0, w: canvas.width, h: canvas.height});
 
 let frame_t: number | undefined;
 const frame = () => {
