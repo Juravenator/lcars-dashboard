@@ -1,13 +1,8 @@
 import { context } from "../canvas";
 import { getColor, randColorNr, unit_gap, unit_height, unit_width } from "../theme";
+import { MenuEntry } from "../types";
 import { Cell } from "./cell";
 
-export interface MenuEntry {
-    height: number;
-    color: number;
-    cell?: Cell;
-    name?: string;
-}
 
 export class SplitMenu extends Cell {
     topMenu: MenuEntry[];

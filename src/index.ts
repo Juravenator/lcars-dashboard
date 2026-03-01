@@ -1,6 +1,8 @@
 import 'audioContext-polyfill';
 import { canvas, clearCanvas } from "./canvas";
 import { MainMenu } from './cells/main-menu';
+import { randColorNr } from './theme';
+import { MenuEntry } from './types';
 
 window.requestAnimationFrame =
   window.requestAnimationFrame ||
@@ -8,7 +10,37 @@ window.requestAnimationFrame =
   (window as any).mozRequestAnimationFrame ||
   function (cb) { return setTimeout(cb, 1000/60); };
 
-const mainMenu = new MainMenu({x: 0, y: 0, w: canvas.width, h: canvas.height});
+const menu = [{
+  height: 2,
+},{
+  name: "registration",
+  height: 2,
+}, {
+  name: "operations",
+}, {
+  name: "security",
+}, {
+  name: "science",
+  height: 2,
+}, {
+  name: "command",
+}, {
+  name: "engineering",
+}, {
+  name: "map",
+}, {
+  name: "info",
+}, {
+}].map((mi: any) => {
+    mi.color = randColorNr();
+    mi.height = mi.height || 1;
+    return mi as MenuEntry;
+});
+
+const mainMenu = new MainMenu({
+    x: 0, y: 0, w: canvas.width, h: canvas.height,
+    menu
+});
 
 let frame_t: number | undefined;
 const frame = () => {

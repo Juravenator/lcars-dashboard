@@ -1,55 +1,17 @@
 import { context } from "../canvas";
 import { playOnce } from "../sound";
 import { getColor, randColorNr, unit_gap, unit_height, unit_width } from "../theme";
-import { Cell } from "./cell";
+import { MenuEntry } from "../types";
+import { Cell, CellInput } from "./cell";
 import { SplitMenu } from "./split-menu";
-
-const menu = [{
-  height: 2,
-  c: randColorNr(),
-}, {
-  name: "registration",
-  c: randColorNr(),
-//   component: AlertsMenu,
-  height: 2,
-}, {
-  name: "operations",
-  c: randColorNr(),
-//   component: HomeMenu,
-  component: true,
-}, {
-  name: "security",
-  c: randColorNr(),
-//   component: HomeMenu,
-}, {
-  name: "science",
-  c: randColorNr(),
-//   component: HomeMenu,
-  height: 2,
-}, {
-  name: "command",
-  c: randColorNr(),
-//   component: HomeMenu,
-}, {
-  name: "engineering",
-  c: randColorNr(),
-//   component: HomeMenu,
-}, {
-  name: "map",
-  c: randColorNr(),
-//   component: HomeMenu,
-}, {
-  name: "info",
-  c: randColorNr(),
-//   component: HomeMenu,
-}, {
-  c: randColorNr(),
-}];
 
 export class MainMenu extends Cell {
 
+  menu: MenuEntry[];
+
   private currentComponent: Cell | null = null;
   private componentCache: {[key: string]: Cell} = {};
+  private bottomFillNr = randColorNr();
 
   private splitMenu = new SplitMenu({
     x: this.x + unit_width + unit_gap, y: this.y,
@@ -64,19 +26,24 @@ export class MainMenu extends Cell {
     }],
   });
 
+  constructor(input: CellInput & {menu: MenuEntry[]}) {
+    super(input);
+    this.menu = input.menu;
+  }
+
   frame() {
     let current_y = this.y;
     
-    for (const mi of menu) {
-        context.fillStyle = getColor(mi.c);
-        if (mi.name || mi.height) {
-          mi.height = mi.height || 1;
-          const mih = (unit_height * mi.height) + (unit_gap * (mi.height - 1));
-          context.fillRect(this.x, current_y, unit_width, mih);
-          current_y += mih + unit_gap;
-        } else {
-          context.fillRect(this.x, current_y, unit_width, this.y + this.h - current_y);
-        }
+    for (const mi of this.menu) {
+        context.fillStyle = getColor(mi.color);
+        const mih = (unit_height * mi.height) + (unit_gap * (mi.height - 1));
+        context.fillRect(this.x, current_y, unit_width, mih);
+        current_y += mih + unit_gap;
+    }
+
+    if (current_y < this.y + this.h) {
+      context.fillStyle = getColor(this.bottomFillNr);
+      context.fillRect(this.x, current_y, unit_width, this.y + this.h - current_y);
     }
 
     this.splitMenu.frame();
@@ -90,16 +57,16 @@ export class MainMenu extends Cell {
     }
 
     let current_y = 0;
-    for (const mi of menu) {
+    for (const mi of this.menu) {
       if (mi.name || mi.height) {
         
         const mih = unit_height * (mi.height || 1);
         const match = y >= current_y && y <= current_y+mih;
         current_y += (mih) + unit_gap;
         if (match) {
-          if (mi.component) {
+          if (mi.cell) {
             playOnce('blip');
-            mi.c = randColorNr();
+            mi.color = randColorNr();
             return true
           }
         }
