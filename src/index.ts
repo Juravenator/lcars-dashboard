@@ -1,6 +1,6 @@
 import 'audioContext-polyfill';
 import { canvas, clearCanvas } from "./canvas";
-import * as mainMenu from "./cells/main-menu";
+import { MainMenu } from './cells/main-menu';
 
 window.requestAnimationFrame =
   window.requestAnimationFrame ||
@@ -8,11 +8,12 @@ window.requestAnimationFrame =
   (window as any).mozRequestAnimationFrame ||
   function (cb) { return setTimeout(cb, 1000/60); };
 
+const mainMenu = new MainMenu(0, 0, canvas.width, canvas.height);
+
 let frame_t: number | undefined;
 const frame = () => {
-    // requestAnimationFrame(frame);
     clearCanvas();
-    mainMenu.frame(0, 0, canvas.width, canvas.height);
+    mainMenu.frame();
     frame_t = setTimeout(() => requestAnimationFrame(frame), 500);
 }
 requestAnimationFrame(frame);
