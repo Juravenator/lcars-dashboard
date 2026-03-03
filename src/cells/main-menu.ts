@@ -52,9 +52,13 @@ export class MainMenu extends Cell {
   }
 
   click(rootx: number, rooty: number): boolean {
+    if (this.currentCell?.click(rootx, rooty)) {
+      return true
+    }
+
     const x = rootx - this.x;
     const y = rooty - this.y;
-    if (x > unit_width) {
+    if (x < 0 || y < 0 || x > unit_width) {
       return false
     }
 
@@ -68,6 +72,9 @@ export class MainMenu extends Cell {
           playOnce('blip');
           this.activateMenu(mi.name);
           return true
+        } else {
+          playOnce('denied');
+          return false
         }
       }
     }
