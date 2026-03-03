@@ -1,14 +1,18 @@
-const soundBuffers: {[key: string]: AudioBuffer} = {};
-
 const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext);
 
-const preloadList: {[key: string]: string} = {
+const preloadList = {
   "blip": "./assets/sounds/computerbeep_15.mp3",
   "denied": "./assets/sounds/computerbeep_73.mp3",
   "system_warning": "./assets/sounds/trekcore/computer/critical.mp3",
 };
+const soundBuffers: {[key in keyof typeof preloadList]: AudioBuffer | null} = {
+  "blip": null,
+  "denied": null,
+  "system_warning": null,
+};
 
-for (const name in preloadList) {
+const keys = Object.keys(preloadList) as Array<keyof typeof preloadList>;
+for (const name of keys) {
   const req = new XMLHttpRequest();
   req.addEventListener("load", function() {
     audioCtx.decodeAudioData(
@@ -35,7 +39,7 @@ export const playOnce = (name: keyof typeof preloadList) => {
 }
 
 let lastForeverSource: AudioBufferSourceNode;
-export const playForever = (name: string) => {
+export const playForever = (name: keyof typeof preloadList) => {
     lastForeverSource && lastForeverSource.stop(0);
     const source = lastForeverSource = audioCtx.createBufferSource();
     source.buffer = soundBuffers[name]!;
