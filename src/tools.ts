@@ -28,3 +28,16 @@ export const intoMenuEntry = (mi: any) => {
     mi.height = mi.height || 1;
     return mi as MenuEntry;
 };
+
+export const toXiB = (s: number) => {
+    const k = 1024;
+    const sizes = ["", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi", "Yi", "Ri"]
+    for (const size of sizes) {
+        if (s < k) {
+            s = Math.floor(s * 100) / 100;
+            return `${s}${size}B`;
+        }
+        s /= k;
+    }
+    return `${s}QiB`;
+}

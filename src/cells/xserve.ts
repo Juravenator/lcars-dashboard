@@ -2,6 +2,7 @@ import { intoMenuEntry } from "../tools";
 import { Cell, CellInput } from "./cell";
 import { CERN } from "./cern";
 import { SplitMenu } from "./split-menu";
+import { ZFS } from "./zfs";
 
 export class Xserve extends Cell {
     menu: SplitMenu;
@@ -17,7 +18,7 @@ export class Xserve extends Cell {
             }].map(intoMenuEntry),
             mainMenu: [{
                 name: "zfs",
-                cell: (input: CellInput) => new CERN(input),
+                cell: (input: CellInput) => new ZFS(input),
             }, {
                 name: "services",
                 cell: (input: CellInput) => new CERN(input),
