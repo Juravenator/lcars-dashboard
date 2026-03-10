@@ -45,7 +45,8 @@ export class SplitMenu extends Cell {
         if (!this.topCache[name]) {
             if (mi?.cell) {
                 const w = unit_width + unit_gap;
-                this.topCache[name] = mi.cell({x: this.x + w, y: this.y, w: this.w - w, h: this.h})
+                const h = (this.topMenu.length + 2) * (unit_height + unit_gap);
+                this.topCache[name] = mi.cell({x: this.x + w, y: this.y, w: this.w - w, h})
             }
         }
 
@@ -63,7 +64,8 @@ export class SplitMenu extends Cell {
             if (mi?.cell) {
                 const w = unit_width + unit_gap;
                 const y = (unit_height + unit_gap) * (this.topMenu.map(mi => mi.height).reduce((a, b) => a + b, 3));
-                this.mainCache[name] = mi.cell({x: this.x + w, y: this.y + y, w: this.w - w, h: this.h})
+                const h = this.h - (this.topMenu.length + 3) * (unit_height + unit_gap);
+                this.mainCache[name] = mi.cell({x: this.x + w, y: this.y + y, w: this.w - w, h})
             }
         }
 
@@ -188,27 +190,6 @@ export class SplitMenu extends Cell {
                 }
             }
         }
-
-        // let topY = (unit_height + unit_gap) * this.topMenu.map(mi => mi.height).reduce((a, b) => a + b);
-        // if (y < topY) {
-        //     const i = Math.floor(y / (unit_height + unit_gap))
-        //     const mi = this.topMenu[i]!;
-        //     if (mi.name) {
-        //         this.activateTopMenu(mi);
-        //         return true;
-
-        //     }
-        // }
-        // let bottomY = topY + (unit_height + unit_gap) * 5;
-        // topY = bottomY + (unit_height + unit_gap) * this.mainMenu.map(mi => mi.height).reduce((a,b) => a + b);
-        // if (y > bottomY && y < topY) {
-        //     const i = Math.floor((y - bottomY) / (unit_height + unit_gap));
-        //     const mi = this.mainMenu[i]!;
-        //     if (mi.name) {
-        //         this.activateMainMenu(mi);
-        //         return true;
-        //     }
-        // }
         
         return false;
     }
