@@ -14,7 +14,7 @@ export const drawButton = (b: MenuEntry, x: number, y: number, {h = unit_height,
 
     if (b.name) {
         const t = b.name.toUpperCase();
-        context.font = "700 16px Inter,Avenir,Helvetica,Arial,sans-serif";
+        context.font = "700 20px Antonio,Inter,Avenir,Helvetica,Arial,sans-serif";
         const m = context.measureText(t);
         context.fillStyle = 'black';
         context.fillText(t, x + w - m.width - 12, y + mih - 6);
