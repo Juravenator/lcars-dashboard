@@ -1,54 +1,15 @@
 import { context } from "../canvas";
+import { zfs_data } from "../store/zfs";
 import { getColor, randColorNr, unit_gap, unit_height, unit_width } from "../theme";
 import { drawButton, toXiB } from "../tools";
 import { Cell, CellInput } from "./cell";
 
-interface ZpoolStatus {
-    pools: {
-        name: string,
-        health: string,
-        size: number,
-        alloc: number,
-        free: number,
-        disks: {
-            device: string,
-            spinning: 'STANDBY' | 'ONLINE' | 'UNKNOWN',
-        }[]
-    }[]
-}
+
 
 export class ZFS extends Cell {
 
     private dividerNr = randColorNr();
-    private zpool_status: ZpoolStatus = {pools: []};
 
-    private pool_colors: [number, number, number][] = [];
-    private disk_colors: number[][] = [];
-
-    constructor(input: CellInput) {
-        super(input)
-        setInterval(this.fetch_zpool.bind(this), 10000);
-        this.fetch_zpool();
-    }
-
-    private fetch_zpool() {
-        const req = new XMLHttpRequest();
-        req.addEventListener("load", () => {
-            if (req.status == 200) {
-                this.zpool_status = req.response;
-                for (let i = 0; i < this.zpool_status.pools.length; i++) {
-                    const pool = this.zpool_status.pools[i]!;
-                    this.pool_colors[i] = this.pool_colors[i] || [randColorNr(), randColorNr(), randColorNr()];
-                    // if (this.disk_colors[i]?.length != pool.disks.length) {
-                        this.disk_colors[i] = pool.disks.map(() => randColorNr());
-                    // }
-                }
-            }
-        });
-        req.responseType = 'json';
-        req.open("GET", "/api/zpools");
-        req.send();
-    }
 
     frame() {
         let current_y = this.y;
@@ -61,10 +22,10 @@ export class ZFS extends Cell {
             context.fillText(t, this.x + this.w - m.width - 12, this.y + 65);
         }
         current_y += unit_height + unit_gap;
-        for (let i = 0; i < this.zpool_status.pools.length; i++) {
-            const zpool = this.zpool_status.pools[i]!;
+        for (let i = 0; i < zfs_data.status.pools.length; i++) {
+            const zpool = zfs_data.status.pools[i]!;
 
-            context.fillStyle = getColor(this.pool_colors[i]![0]);
+            context.fillStyle = getColor(zfs_data.pool_colors[i]![0]);
             context.fillRect(this.x, current_y, unit_width, unit_height);
             context.fillStyle = 'black';
             context.font = "700 20px Antonio,'Arial Narrow','Avenir Next Condensed','sans-serif'";
@@ -85,7 +46,7 @@ export class ZFS extends Cell {
             } else if (perc > 60) {
                 context.fillStyle = 'orange';
             } else {
-                context.fillStyle = getColor(this.pool_colors[i]![1]);
+                context.fillStyle = getColor(zfs_data.pool_colors[i]![1]);
             }
             context.fillRect(this.x + unit_width + unit_gap * 2 + 10, current_y, 100, unit_height);
             let x_start = unit_width + unit_gap * 2 + 110;
@@ -117,7 +78,7 @@ export class ZFS extends Cell {
                 context.fillText(t, this.x + unit_width + 2*unit_gap + 110 - m.width - 12, current_y + unit_height - 6);
             }
 
-            context.fillStyle = getColor(this.pool_colors[i]![2]);
+            context.fillStyle = getColor(zfs_data.pool_colors[i]![2]);
             context.fillRect(x_start, current_y + 30, Math.floor(bar_w * (zpool.alloc/zpool.size)), 15);
 
             current_y += unit_height + unit_gap;
@@ -137,11 +98,11 @@ export class ZFS extends Cell {
         current_y += unit_height;
 
         let current_x = this.x + 10 - unit_gap;
-        for (let i = 0; i < this.zpool_status.pools.length; i++) {
-            const zpool = this.zpool_status.pools[i]!;
+        for (let i = 0; i < zfs_data.status.pools.length; i++) {
+            const zpool = zfs_data.status.pools[i]!;
             for (let i2 = 0; i2 < zpool.disks.length; i2++) {
                 const disk = zpool.disks[i2]!;
-                context.fillStyle = getColor(this.disk_colors[i]![i2]!);
+                context.fillStyle = getColor(zfs_data.disk_colors[i]![i2]!);
                 context.beginPath();
                 context.roundRect(current_x, current_y, unit_width, unit_height, 40);
                 context.fill();
