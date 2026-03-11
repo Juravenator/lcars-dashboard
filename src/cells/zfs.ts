@@ -176,8 +176,6 @@ export class ZFS extends Cell {
     }
 
     click(x: number, y: number): boolean {
-        console.log('click', y, this.y, this.h);
-        
         return false;
     }
 }
