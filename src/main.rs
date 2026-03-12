@@ -1,7 +1,13 @@
-use axum::{routing::get, Router, Json};
+use axum::{Json, Router, http, routing::get};
 use serde::Serialize;
+use tower_http::cors::CorsLayer;
 use std::process::Stdio;
 use tokio::process::Command;
+use tower_http::cors;
+
+use crate::static_files::static_handler;
+
+mod static_files;
 
 #[derive(Serialize)]
 struct Disk {
@@ -34,7 +40,9 @@ struct ApiResponse {
 #[tokio::main]
 async fn main() {
     let app = Router::new()
-        .route("/api/zpools", get(get_zpools));
+        .route("/api/zpools", get(get_zpools))
+        .fallback(static_handler)
+        .layer(CorsLayer::new().allow_origin(cors::Any).allow_methods([http::Method::GET]));
 
     axum::serve(
         tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap(),
