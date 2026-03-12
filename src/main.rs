@@ -11,6 +11,11 @@ mod static_files;
 async fn main() {
     let app = Router::new()
         .route("/api/zpools", get(endpoints::zpools::get))
+        .route("/api/deployments", get(endpoints::deployments::get))
+        .route(
+            "/api/deployments/{namespace}/{name}/restart",
+            get(endpoints::deployments::restart),
+        )
         .fallback(static_handler)
         .layer(
             CorsLayer::new()

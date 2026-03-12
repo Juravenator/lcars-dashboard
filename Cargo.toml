@@ -12,3 +12,5 @@ anyhow = "1.0.102"
 tower-http = { version = "0.6.6", features = ["cors"] }
 rust-embed = { version = "8.5.0", features = ["interpolate-folder-path", "compression"] }
 mime_guess = "2.0.5"
+kube = { version = "3.0.1", features = ["runtime", "derive"] }
+k8s-openapi = { version = "0.27.0", features = ["v1_31", "schemars"] }
