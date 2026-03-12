@@ -1,7 +1,10 @@
+use axum::http::Uri;
+use axum::{
+    http::{StatusCode, header},
+    response::{IntoResponse, Response},
+};
 use mime_guess::{Mime, mime};
 use rust_embed::{Embed, EmbeddedFile};
-use axum::{http::{StatusCode, header}, response::{IntoResponse, Response}};
-use axum::http::Uri;
 
 #[derive(Embed)]
 #[folder = "../dashboard-canvas/dist"]
@@ -21,16 +24,25 @@ impl<T: Into<String>> IntoResponse for StaticFile<T> {
     fn into_response(self) -> Response {
         let path = self.0.into();
 
-        let static_file = file(&path).or_else(|| file_with_mime(&format!("{path}.html"), mime::TEXT_HTML));
+        let static_file =
+            file(&path).or_else(|| file_with_mime(&format!("{path}.html"), mime::TEXT_HTML));
 
         match static_file {
-            Some((file, mime)) => ([(header::CONTENT_TYPE, mime.as_ref())], file.data).into_response(),
-            None => match (file("index.html"), path.split(&['/', '|', ':']).last().unwrap_or_default().contains('.')) {
+            Some((file, mime)) => {
+                ([(header::CONTENT_TYPE, mime.as_ref())], file.data).into_response()
+            }
+            None => match (
+                file("index.html"),
+                path.split(&['/', '|', ':'])
+                    .last()
+                    .unwrap_or_default()
+                    .contains('.'),
+            ) {
                 (Some((file, mime)), false) => {
                     ([(header::CONTENT_TYPE, mime.as_ref())], file.data).into_response()
-                },
-                _ => (StatusCode::NOT_FOUND, "404 Not Found").into_response()
-            }
+                }
+                _ => (StatusCode::NOT_FOUND, "404 Not Found").into_response(),
+            },
         }
     }
 }
