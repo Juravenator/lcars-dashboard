@@ -20,9 +20,9 @@ enum DiskStatus {
 struct Pool {
     name: String,
     health: String,
-    size: String,
-    alloc: String,
-    free: String,
+    size: u64,
+    alloc: u64,
+    free: u64,
     disks: Vec<Disk>,
 }
 
@@ -51,7 +51,7 @@ async fn get_zpools() -> Json<ApiResponse> {
 
 async fn zpools() -> Result<Vec<Pool>, anyhow::Error> {
     let output = Command::new("zpool")
-        .args(["list", "-H", "-o", "name,health,size,alloc,free"])
+        .args(["list", "-Hpo", "name,health,size,alloc,free"])
         .output()
         .await?;
 
@@ -66,9 +66,9 @@ async fn zpools() -> Result<Vec<Pool>, anyhow::Error> {
 
         let name = parts[0].to_owned();
         let health = parts[1].to_owned();
-        let size = parts[2].to_owned();
-        let alloc = parts[3].to_owned();
-        let free = parts[4].to_owned();
+        let size = parts[2].parse().unwrap();
+        let alloc = parts[3].parse().unwrap();
+        let free = parts[4].parse().unwrap();
 
         let disks = zpool_disks(&name).await.unwrap_or_default();
 
