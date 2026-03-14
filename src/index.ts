@@ -64,11 +64,11 @@ if (isTouchDevice) {
     addEventListener('touchstart', e => {
         const t = e.touches[0];
         if (t) {
-            click(t.clientX, t.clientY);
+            click(t.clientX * window.devicePixelRatio, t.clientY * window.devicePixelRatio);
         }
         e.stopPropagation();
         e.preventDefault();
     }, {passive: true});
 } else {
-    addEventListener('click', e => click(e.clientX, e.clientY));
+    addEventListener('click', e => click(e.clientX * window.devicePixelRatio, e.clientY * window.devicePixelRatio));
 }
