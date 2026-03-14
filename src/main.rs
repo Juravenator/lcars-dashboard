@@ -13,7 +13,7 @@ async fn main() {
         .route("/api/zpools", get(endpoints::zpools::get))
         .route("/api/deployments", get(endpoints::deployments::get))
         .route(
-            "/api/deployments/{namespace}/{name}/restart",
+            "/api/deployments/{namespace}/{kind}/{name}/restart",
             get(endpoints::deployments::restart),
         )
         .fallback(static_handler)

@@ -5,16 +5,18 @@ use axum::{
     response::{IntoResponse, Response},
 };
 use k8s_openapi::{
-    api::{apps::v1::Deployment, core::v1::Event},
+    api::{apps::v1::{Deployment, StatefulSet}, core::v1::Event},
     jiff::{SignedDuration, Timestamp},
 };
 use kube::api::{Patch, PatchParams};
 use kube::{Api, Client, ResourceExt, api::ListParams};
 use serde::Serialize;
 use serde_json::json;
+use anyhow::anyhow;
 
 #[derive(Serialize)]
 struct DeployData {
+    kind: String,
     namespace: String,
     name: String,
     num_desired: i32,
@@ -31,8 +33,8 @@ pub async fn get() -> Json<ApiResponse> {
     Json(ApiResponse { deployments })
 }
 
-pub async fn restart(Path((namespace, name)): Path<(String, String)>) -> Response {
-    match restart_deployment(&namespace, &name).await {
+pub async fn restart(Path((namespace, kind, name)): Path<(String, String, String)>) -> Response {
+    match restart_deployment(&namespace, &kind, &name).await {
         Ok(()) => StatusCode::OK.into_response(),
         Err(err) => (StatusCode::INTERNAL_SERVER_ERROR, err.to_string()).into_response(),
     }
@@ -41,12 +43,16 @@ pub async fn restart(Path((namespace, name)): Path<(String, String)>) -> Respons
 async fn list_deployments() -> Result<Vec<DeployData>, anyhow::Error> {
     let client = Client::try_default().await?;
     let api: Api<Deployment> = Api::all(client);
-
     let deploys = api.list(&Default::default()).await?;
+
+    let client = Client::try_default().await?;
+    let api: Api<StatefulSet> = Api::all(client);
+    let ss = api.list(&Default::default()).await?;
 
     let deploys = deploys
         .into_iter()
         .map(|d| DeployData {
+            kind: "deployment".into(),
             namespace: d.metadata.namespace.clone().unwrap_or("default".to_owned()),
             name: d.name_any(),
             num_desired: d
@@ -60,12 +66,25 @@ async fn list_deployments() -> Result<Vec<DeployData>, anyhow::Error> {
                 .and_then(|s| s.ready_replicas)
                 .unwrap_or_default(),
         })
+        .chain(ss.into_iter().map(|ss| DeployData {
+            kind: "statefulset".into(),
+            namespace: ss.metadata.namespace.clone().unwrap_or("default".to_owned()),
+            name: ss.name_any(),
+            num_desired: ss.status.as_ref()
+                .map(|s| s.replicas)
+                .unwrap_or_default(),
+            num_ready: ss
+                .status
+                .as_ref()
+                .and_then(|s| s.ready_replicas)
+                .unwrap_or_default(),
+        }))
         .collect::<Vec<_>>();
 
     Ok(deploys)
 }
 
-async fn restart_deployment(namespace: &str, name: &str) -> Result<(), anyhow::Error> {
+async fn restart_deployment(namespace: &str, kind: &str, name: &str) -> Result<(), anyhow::Error> {
     let client = Client::try_default().await?;
     let api: Api<Event> = Api::namespaced(client, namespace);
 
@@ -88,8 +107,6 @@ async fn restart_deployment(namespace: &str, name: &str) -> Result<(), anyhow::E
         }
     }
 
-    let client = Client::try_default().await?;
-    let api: Api<Deployment> = Api::namespaced(client, namespace);
 
     let patch = json!({
         "spec": {
@@ -103,8 +120,23 @@ async fn restart_deployment(namespace: &str, name: &str) -> Result<(), anyhow::E
         }
     });
 
+    let client = Client::try_default().await?;
+    match kind {
+        "deployment" => {
+            let api: Api<Deployment> = Api::namespaced(client, namespace);
+
+                api.patch(name, &PatchParams::default(), &Patch::Merge(&patch))
+                    .await?;
+        },
+        "statefulset" => {
+            let api: Api<StatefulSet> = Api::namespaced(client, namespace);
+
     api.patch(name, &PatchParams::default(), &Patch::Merge(&patch))
         .await?;
+        },
+        other => return Err(anyhow!("bad deployment kind {}", other))
+    }
+    
 
     Ok(())
 }
