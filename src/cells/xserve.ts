@@ -1,6 +1,5 @@
 import { intoMenuEntry } from "../tools";
 import { Cell, CellInput } from "./cell";
-import { CERN } from "./cern";
 import { Metrics } from "./metrics";
 import { Services } from "./services";
 import { SplitMenu } from "./split-menu";

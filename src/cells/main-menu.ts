@@ -3,7 +3,6 @@ import { randColorNr, unit_gap, unit_height, unit_width } from "../theme";
 import { drawButton } from "../tools";
 import { MenuEntry } from "../types";
 import { Cell, CellInput } from "./cell";
-import { SplitMenu } from "./split-menu";
 
 export class MainMenu extends Cell {
 
