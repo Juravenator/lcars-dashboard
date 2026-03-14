@@ -1,0 +1,12 @@
+{
+  "dockerFile": "Dockerfile",
+  "customizations": {
+    "vscode": {
+      "extensions": ["rust-lang.rust-analyzer"]
+    }
+  },
+  "forwardPorts": [],
+  "mounts": [
+    "source=${localWorkspaceFolder}/../dashboard-canvas/dist,target=/workspaces/dashboard-api/web,type=bind,consistency=cached"
+  ]
+}
