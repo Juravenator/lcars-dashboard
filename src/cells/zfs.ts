@@ -161,10 +161,6 @@ export class ZFS extends Cell {
     }
 
     click(x: number, y: number) {
-        if (x < this.x || x > this.x + this.w || y < this.y || y > this.y + this.h) {
-            return false;
-        }
-        playOnce('denied');
         return false;
     }
 }

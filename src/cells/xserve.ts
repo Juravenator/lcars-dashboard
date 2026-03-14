@@ -1,6 +1,7 @@
 import { intoMenuEntry } from "../tools";
 import { Cell, CellInput } from "./cell";
 import { CERN } from "./cern";
+import { Metrics } from "./metrics";
 import { Services } from "./services";
 import { SplitMenu } from "./split-menu";
 import { ZFS } from "./zfs";
@@ -15,7 +16,7 @@ export class Xserve extends Cell {
             w: input.w, h: input.h,
             topMenu: [{
                 name: "core metrics",
-                cell: (input: CellInput) => new CERN(input),
+                cell: (input: CellInput) => new Metrics(input),
             }].map(intoMenuEntry),
             mainMenu: [{
                 name: "zfs",
