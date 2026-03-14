@@ -1,10 +1,9 @@
 import { context } from "../canvas";
+import { playOnce } from "../sound";
 import { zfs_data } from "../store/zfs";
 import { getColor, randColorNr, unit_gap, unit_height, unit_width } from "../theme";
-import { drawButton, toXiB } from "../tools";
-import { Cell, CellInput } from "./cell";
-
-
+import { toXiB } from "../tools";
+import { Cell } from "./cell";
 
 export class ZFS extends Cell {
 
@@ -136,7 +135,11 @@ export class ZFS extends Cell {
         }
     }
 
-    click(x: number, y: number): boolean {
+    click(x: number, y: number) {
+        if (x < this.x || x > this.x + this.w || y < this.y || y > this.y + this.h) {
+            return false;
+        }
+        playOnce('denied');
         return false;
     }
 }

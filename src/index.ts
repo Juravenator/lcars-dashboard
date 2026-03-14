@@ -48,11 +48,15 @@ const frame = () => {
 }
 requestAnimationFrame(frame);
 
+export const redraw = () => {
+    clearTimeout(frame_t);
+    requestAnimationFrame(frame);
+}
+
 const click = (x: number, y: number) => {
     const needupdate = mainMenu.click(x, y);
     if (needupdate) {
-        clearTimeout(frame_t);
-        requestAnimationFrame(frame);
+        redraw();
     }
 }
 export const isTouchDevice = 'ontouchstart' in window;
