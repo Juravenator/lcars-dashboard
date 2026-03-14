@@ -16,6 +16,7 @@ async fn main() {
             "/api/deployments/{namespace}/{kind}/{name}/restart",
             get(endpoints::deployments::restart),
         )
+        .route("/api/metrics", get(endpoints::metrics::get))
         .fallback(static_handler)
         .layer(
             CorsLayer::new()

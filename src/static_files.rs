@@ -8,6 +8,7 @@ use rust_embed::{Embed, EmbeddedFile};
 
 #[derive(Embed)]
 #[folder = "../dashboard-canvas/dist"]
+// #[folder = "web"]
 struct StaticFiles;
 
 pub struct StaticFile<T>(pub T);
