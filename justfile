@@ -9,6 +9,10 @@ dev: tsc-watch run-server html-watch
 # build everything
 build: tsc html
 
+# build, and watch for changes
+[parallel]
+build-watch: tsc-watch html-watch
+
 # build and watch typescript
 [group("internals")]
 tsc-watch:
