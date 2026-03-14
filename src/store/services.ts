@@ -17,14 +17,14 @@ const fetch_services = () => {
     const req = new XMLHttpRequest();
     req.addEventListener("load", () => {
         if (req.status == 200) {
-            services_data.services = req.response.deployments;
+            services_data.services = JSON.parse(req.response.deployments);
             for (let i = 0; i < services_data.services.length; i++) {
                 services_data.service_colors[i] = services_data.service_colors[i] ||
                     [randColorNr(), randColorNr(), randColorNr(), randColorNr()];
             }
         }
     });
-    req.responseType = 'json';
+    req.responseType = 'text';
     req.open("GET", "/api/deployments");
     req.send();
 }

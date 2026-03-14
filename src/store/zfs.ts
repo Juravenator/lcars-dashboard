@@ -24,7 +24,7 @@ const fetch_zpool = () => {
     const req = new XMLHttpRequest();
     req.addEventListener("load", () => {
         if (req.status == 200) {
-            zfs_data.status = req.response;
+            zfs_data.status = JSON.parse(req.response);
             for (let i = 0; i < zfs_data.status.pools.length; i++) {
                 const pool = zfs_data.status.pools[i]!;
                 zfs_data.pool_colors[i] = zfs_data.pool_colors[i] || [randColorNr(), randColorNr(), randColorNr()];
@@ -34,7 +34,7 @@ const fetch_zpool = () => {
             }
         }
     });
-    req.responseType = 'json';
+    // req.responseType = 'json';
     req.open("GET", "/api/zpools");
     req.send();
 }

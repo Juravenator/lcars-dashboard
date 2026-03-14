@@ -13,6 +13,7 @@ export class ZFS extends Cell {
     frame() {
         let current_y = this.y;
 
+        // title
         context.fillStyle = 'white';
         context.font = "700 65px Antonio,'Arial Narrow','Avenir Next Condensed','sans-serif'";
         {
@@ -21,9 +22,11 @@ export class ZFS extends Cell {
             context.fillText(t, this.x + this.w - m.width - 12, this.y + 65);
         }
         current_y += unit_height + unit_gap;
+
         for (let i = 0; i < zfs_data.status.pools.length; i++) {
             const zpool = zfs_data.status.pools[i]!;
 
+            // name
             context.fillStyle = getColor(zfs_data.pool_colors[i]![0]);
             context.fillRect(this.x, current_y, unit_width, unit_height);
             context.fillStyle = 'black';
@@ -33,12 +36,15 @@ export class ZFS extends Cell {
                 context.fillText(zpool.name, this.x + unit_width - m.width - 12, current_y + unit_height - 6);
             }
 
+            // health
             if (zpool.health == "ONLINE") {
                 context.fillStyle = 'green';
             } else {
                 context.fillStyle = 'red';
             }
             context.fillRect(this.x + unit_width + unit_gap, current_y, 10, unit_height);
+
+            // progress box
             const perc = zpool.alloc * 100 / zpool.size;
             if (perc > 80) {
                 context.fillStyle = 'red';
@@ -64,6 +70,7 @@ export class ZFS extends Cell {
                 context.fillText(`${n}%`, x_start + bar_interval * (i+1), current_y + 66);
             }
 
+            // size texts
             context.fillStyle = 'black';
             context.font = "700 18px Antonio,'Arial Narrow','Avenir Next Condensed','sans-serif'";
             {
@@ -77,16 +84,20 @@ export class ZFS extends Cell {
                 context.fillText(t, this.x + unit_width + 2*unit_gap + 110 - m.width - 12, current_y + unit_height - 6);
             }
 
+            // progress bar
             context.fillStyle = getColor(zfs_data.pool_colors[i]![2]);
             context.fillRect(x_start, current_y + 30, Math.floor(bar_w * (zpool.alloc/zpool.size)), 15);
 
             current_y += unit_height + unit_gap;
         }
+
+        // divider
         context.fillStyle = getColor(this.dividerNr);
         context.fillRect(this.x, current_y, this.w - unit_gap, 40);
         current_y += 40 + unit_gap;
 
 
+        // title
         context.fillStyle = 'white';
         context.font = "700 65px Antonio,'Arial Narrow','Avenir Next Condensed','sans-serif'";
         {
@@ -103,7 +114,21 @@ export class ZFS extends Cell {
                 const disk = zpool.disks[i2]!;
                 context.fillStyle = getColor(zfs_data.disk_colors[i]![i2]!);
                 context.beginPath();
-                context.roundRect(current_x, current_y, unit_width, unit_height, 40);
+                context.moveTo(current_x + unit_width - 40, current_y);
+                context.lineTo(current_x + 40, current_y);
+                context.arcTo (current_x, current_y,
+                               current_x, current_y + unit_height / 2,
+                               35);
+                context.arcTo (current_x, current_y + unit_height,
+                               current_x + 40, current_y + unit_height,
+                               35);
+                context.lineTo(current_x + unit_width - 40, current_y + unit_height);
+                context.arcTo (current_x + unit_width, current_y + unit_height,
+                               current_x + unit_width, current_y + unit_height / 2,
+                               35);
+                context.arcTo (current_x + unit_width, current_y,
+                               current_x + unit_width - 40, current_y,
+                               35);
                 context.fill();
                 {
                     context.fillStyle = 'black';

@@ -148,7 +148,6 @@ export class Services extends Cell {
                 redraw();
             }
         });
-        req.responseType = 'json';
         req.open("GET", `/api/deployments/${service.namespace}/${service.kind}/${service.name}/restart`);
         req.send();
     }
