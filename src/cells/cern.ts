@@ -395,7 +395,9 @@ export class CERN extends Cell {
         this.active_img = img;
     };
     const active_ex = vistars[this.active_ex]!;
-    img.src = active_ex[2][active_ex[1]]!.img + '?' + Math.random();
+    let src = active_ex[2][active_ex[1]]!.img + '?' + Math.random();
+    src = src.replace("https://vistar-capture.s3.cern.ch/", "/api/vistars/");    
+    img.src = src;
   }
 
   frame() {
