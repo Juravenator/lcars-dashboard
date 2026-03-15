@@ -9,6 +9,9 @@ mod static_files;
 
 #[tokio::main]
 async fn main() {
+    rustls::crypto::aws_lc_rs::default_provider()
+        .install_default()
+        .expect("Failed to install rustls crypto provider");
     let app = Router::new()
         .route("/api/zpools", get(endpoints::zpools::get))
         .route("/api/deployments", get(endpoints::deployments::get))
@@ -17,6 +20,7 @@ async fn main() {
             get(endpoints::deployments::restart),
         )
         .route("/api/metrics", get(endpoints::metrics::get))
+        .route("/api/vistars/{*path}", get(endpoints::vistars::get))
         .fallback(static_handler)
         .layer(
             CorsLayer::new()

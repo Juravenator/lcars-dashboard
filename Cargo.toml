@@ -14,6 +14,8 @@ rust-embed = { version = "8.5.0", features = ["interpolate-folder-path", "compre
 mime_guess = "2.0.5"
 kube = { version = "3.0.1", features = ["runtime", "derive"] }
 k8s-openapi = { version = "0.27.0", features = ["v1_31", "schemars"] }
+reqwest = "0.13.2"
+rustls = "0.23.37"
 
 [profile.release]
 strip = true
