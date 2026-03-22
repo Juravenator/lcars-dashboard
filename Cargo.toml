@@ -2,6 +2,7 @@
 name = "dashboard-api"
 version = "0.1.0"
 edition = "2024"
+repository = "https://github.com/juravenator/lcars-dashboard"
 
 [dependencies]
 axum = "0.8.8"
@@ -21,3 +22,8 @@ rustls = "0.23.37"
 strip = true
 opt-level = "z"
 lto = true
+
+# The profile that 'dist' will build with
+[profile.dist]
+inherits = "release"
+lto = "thin"
