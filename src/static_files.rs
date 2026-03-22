@@ -7,8 +7,7 @@ use mime_guess::{Mime, mime};
 use rust_embed::{Embed, EmbeddedFile};
 
 #[derive(Embed)]
-#[folder = "../dashboard-canvas/dist"]
-// #[folder = "web"]
+#[folder = "web/dist"]
 struct StaticFiles;
 
 pub struct StaticFile<T>(pub T);

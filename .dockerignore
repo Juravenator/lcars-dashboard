@@ -1,0 +1,6 @@
+/target
+/testpool
+/web/node_modules
+/web/treksounds
+/web/dist
+/web/tsc
