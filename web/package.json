@@ -1,0 +1,17 @@
+{
+  "name": "pawsteroids",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.html",
+  "private": true,
+  "dependencies": {
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup": "^4.59.0",
+    "typescript": "^5.9.3",
+    "audioContext-polyfill": "git://github.com/Juravenator/AudioContext-Polyfill.git#e26e7857"
+  }
+}
