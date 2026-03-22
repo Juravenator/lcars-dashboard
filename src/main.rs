@@ -1,6 +1,7 @@
 use axum::{Router, http, routing::get};
 use tower_http::cors;
 use tower_http::cors::CorsLayer;
+use tokio::signal;
 
 use crate::static_files::static_handler;
 
@@ -32,6 +33,27 @@ async fn main() {
         tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap(),
         app,
     )
+    .with_graceful_shutdown(shutdown_signal())
     .await
     .unwrap();
+}
+
+async fn shutdown_signal() {
+    let ctrl_c = async {
+        signal::ctrl_c()
+            .await
+            .expect("failed to install sigterm handler");
+    };
+
+    let terminate = async {
+        signal::unix::signal(signal::unix::SignalKind::terminate())
+            .expect("failed to install sigterm handler")
+            .recv()
+            .await;
+    };
+
+    tokio::select! {
+        _ = ctrl_c => println!("sigint"),
+        _ = terminate => println!("sigterm"),
+    }
 }
