@@ -112,7 +112,11 @@ export class ZFS extends Cell {
             const zpool = zfs_data.status.pools[i]!;
             for (let i2 = 0; i2 < zpool.disks.length; i2++) {
                 const disk = zpool.disks[i2]!;
-                context.fillStyle = getColor(zfs_data.disk_colors[i]![i2]!);
+                if (disk.spinning == 'STANDBY') {
+                    context.fillStyle = '#777'
+                } else {
+                    context.fillStyle = getColor(zfs_data.disk_colors[i]![i2]!);
+                }
                 context.beginPath();
                 context.moveTo(current_x + unit_width - 40, current_y);
                 context.lineTo(current_x + 40, current_y);
