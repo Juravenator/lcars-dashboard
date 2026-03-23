@@ -5,6 +5,7 @@ release:
     read -p "Release version (last=$last_tag): v" tag
     sed -i "s|^version = .*|version = \"$tag\"|" Cargo.toml
     cargo update
+    git add Cargo.toml Cargo.lock
     git commit -m "release v$tag"
     git tag "v$tag"
     git push
