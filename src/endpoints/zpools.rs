@@ -87,7 +87,7 @@ async fn zpool_disks(status: &str) -> Result<Vec<Disk>, anyhow::Error> {
     for line in status.lines() {
         let line = line.trim();
         if line.starts_with("/") {
-            let device = line.split_whitespace().next().unwrap().split("/").last().unwrap().to_owned();
+            let device = line.split_whitespace().next().unwrap().to_owned();
             let spinning = disk_status(&device).await;
             disks.push(Disk { device, spinning });
         }

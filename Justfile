@@ -15,7 +15,7 @@ testpool:
 release:
     #!/usr/bin/env bash
     set -o errexit -o nounset -o pipefail
-    last_tag=$(git tag | tail -n1)
+    last_tag=$(git for-each-ref --sort=creatordate --format '%(refname:short)' refs/tags | tail -n1)
     read -p "Release version (last=$last_tag): v" tag
     sed -i "s|^version = .*|version = \"$tag\"|" Cargo.toml
     cargo update

@@ -50,18 +50,6 @@ export class ZFS2 extends Cell {
             }
             current_x += unit_width + unit_gap;
 
-            // disk active
-            for (let i2 = 0; i2 < zpool.disks.length; i2++) {
-                const disk = zpool.disks[i2]!;
-                if (disk.spinning == 'STANDBY') {
-                    context.fillStyle = 'gray';
-                } else {
-                    context.fillStyle = 'white';
-                }
-                context.fillRect(current_x, current_y, 10, unit_height);
-                current_x += 10 + unit_gap;
-            }
-
             // total space
             context.fillStyle = getColor(zfs_data.pool_colors[i]![1]);
             context.fillRect(current_x, current_y, 100, unit_height);
@@ -95,6 +83,20 @@ export class ZFS2 extends Cell {
                 context.fillText(t, current_x + 100 - m.width - 12, current_y + unit_height - 6);
             }
             current_x += 100 + unit_gap;
+
+            // disk active
+            for (let i2 = 0; i2 < zpool.disks.length; i2++) {
+                const disk = zpool.disks[i2]!;
+                if (disk.spinning == 'STANDBY') {
+                    context.fillStyle = 'gray';
+                } else {
+                    context.fillStyle = 'white';
+                }
+                context.fillRect(current_x, current_y, 10, unit_height);
+                current_x += 10 + unit_gap;
+            }
+
+            current_y += unit_height + unit_gap;
         }
 
         // selected zpool status
@@ -117,7 +119,7 @@ export class ZFS2 extends Cell {
             return false;
         }
         for (let i = 0; i < zfs_data.status.pools.length; i++) {
-            if (y < this.y + (i + 1) * (unit_height * unit_gap)) {
+            if (y < this.y + unit_height + unit_gap + (i + 1) * (unit_height + unit_gap)) {
                 this.selected_zpool = i;
                 playOnce('blip');
                 return true;
