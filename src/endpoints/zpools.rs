@@ -24,6 +24,7 @@ struct Pool {
     alloc: u64,
     free: u64,
     disks: Vec<Disk>,
+    status: String,
 }
 
 #[derive(Serialize)]
@@ -56,8 +57,14 @@ async fn zpools() -> Result<Vec<Pool>, anyhow::Error> {
         let size = parts[2].parse().unwrap();
         let alloc = parts[3].parse().unwrap();
         let free = parts[4].parse().unwrap();
+        
+        let status = Command::new("zpool")
+            .args(["status", "-PL", &name])
+            .output()
+            .await?;
+        let status = String::from_utf8(status.stdout)?;
 
-        let disks = zpool_disks(&name).await.unwrap_or_default();
+        let disks = zpool_disks(&status).await.unwrap_or_default();
 
         let p = Pool {
             name,
@@ -66,6 +73,7 @@ async fn zpools() -> Result<Vec<Pool>, anyhow::Error> {
             alloc,
             free,
             disks,
+            status,
         };
         pools.push(p);
     }
@@ -73,19 +81,13 @@ async fn zpools() -> Result<Vec<Pool>, anyhow::Error> {
     Ok(pools)
 }
 
-async fn zpool_disks(pool: &str) -> Result<Vec<Disk>, anyhow::Error> {
-    let output = Command::new("zpool")
-        .args(["status", "-P", pool])
-        .output()
-        .await?;
-
-    let stdout = String::from_utf8(output.stdout)?;
+async fn zpool_disks(status: &str) -> Result<Vec<Disk>, anyhow::Error> {
     let mut disks = Vec::new();
 
-    for line in stdout.lines() {
+    for line in status.lines() {
         let line = line.trim();
         if line.starts_with("/") {
-            let device = line.split_whitespace().next().unwrap().to_string();
+            let device = line.split_whitespace().next().unwrap().split("/").last().unwrap().to_owned();
             let spinning = disk_status(&device).await;
             disks.push(Disk { device, spinning });
         }

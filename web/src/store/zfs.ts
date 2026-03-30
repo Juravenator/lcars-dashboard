@@ -7,6 +7,7 @@ interface ZpoolStatus {
         size: number,
         alloc: number,
         free: number,
+        status: string,
         disks: {
             device: string,
             spinning: 'STANDBY' | 'ONLINE' | 'UNKNOWN',

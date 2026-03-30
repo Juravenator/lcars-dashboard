@@ -4,6 +4,7 @@ import { Metrics } from "./metrics";
 import { Services } from "./services";
 import { SplitMenu } from "./split-menu";
 import { ZFS } from "./zfs";
+import { ZFS2 } from "./zfs2";
 
 export class Xserve extends Cell {
     menu: SplitMenu;
@@ -18,6 +19,9 @@ export class Xserve extends Cell {
                 cell: (input: CellInput) => new Metrics(input),
             }].map(intoMenuEntry),
             mainMenu: [{
+                name: "zfs2",
+                cell: (input: CellInput) => new ZFS2(input),
+            }, {
                 name: "zfs",
                 cell: (input: CellInput) => new ZFS(input),
             }, {
