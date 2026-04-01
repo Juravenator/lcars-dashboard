@@ -84,6 +84,31 @@ export class ZFS2 extends Cell {
             }
             current_x += 100 + unit_gap;
 
+            // kb_read
+            context.fillStyle = getColor(zfs_data.pool_colors[i]![3]);
+            context.fillRect(current_x, current_y, 120, unit_height);
+            context.fillStyle = 'black';
+            {
+                const total = zpool.disks.map(d => d.kb_read).reduce((a, b) => a + b);
+                const t = `${toXiB(total * 1024)} R`;
+                const m = context.measureText(t);
+                context.fillText(t, current_x + 120 - m.width - 12, current_y + unit_height - 6);
+            }
+            current_x += 120 + unit_gap;
+
+            // kb_write
+            context.fillStyle = getColor(zfs_data.pool_colors[i]![3]);
+            context.fillRect(current_x, current_y, 120, unit_height);
+            context.fillStyle = 'black';
+            {
+                const total = zpool.disks.map(d => d.kb_write).reduce((a, b) => a + b);
+                const t = `${toXiB(total * 1024)} W`;
+                const m = context.measureText(t);
+                context.fillText(t, current_x + 120 - m.width - 12, current_y + unit_height - 6);
+            }
+            current_x += 120 + unit_gap;
+
+
             // disk active
             for (let i2 = 0; i2 < zpool.disks.length; i2++) {
                 const disk = zpool.disks[i2]!;
