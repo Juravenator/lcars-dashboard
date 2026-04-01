@@ -1,7 +1,7 @@
 use axum::{Router, http, routing::get};
+use tokio::signal;
 use tower_http::cors;
 use tower_http::cors::CorsLayer;
-use tokio::signal;
 
 use crate::static_files::static_handler;
 

@@ -1,4 +1,7 @@
-use axum::{extract::Path, response::{IntoResponse, Response}};
+use axum::{
+    extract::Path,
+    response::{IntoResponse, Response},
+};
 use reqwest::StatusCode;
 
 pub async fn get(Path(location): Path<String>) -> Response {

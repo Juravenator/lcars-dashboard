@@ -7,6 +7,8 @@ use tokio::process::Command;
 struct Disk {
     device: String,
     spinning: DiskStatus,
+    kb_read: usize,
+    kb_write: usize,
 }
 
 #[derive(Serialize)]
@@ -38,15 +40,33 @@ pub async fn get() -> Json<ApiResponse> {
 }
 
 async fn zpools() -> Result<Vec<Pool>, anyhow::Error> {
-    let output = Command::new("zpool")
+    let iostat = Command::new("iostat")
+        .args(["-dy", "1", "1"])
+        .output()
+        .await?;
+    let iostat = String::from_utf8(iostat.stdout)?;
+    let iostat = iostat
+        .lines()
+        .filter_map(|l| {
+            let mut p = l.split_whitespace();
+            let device = p.next();
+            let mut p = p.skip(4);
+            let kb_read = p.next().and_then(|s| s.parse::<usize>().ok());
+            let kb_write = p.next().and_then(|s| s.parse::<usize>().ok());
+            match (device, kb_read, kb_write) {
+                (Some(device), Some(kb_read), Some(kb_write)) => Some((device, kb_read, kb_write)),
+                _ => None,
+            }
+        })
+        .collect::<Vec<_>>();
+    let zpool_list = Command::new("zpool")
         .args(["list", "-Hpo", "name,health,size,alloc,free"])
         .output()
         .await?;
-
-    let stdout = String::from_utf8(output.stdout)?;
+    let zpool_list = String::from_utf8(zpool_list.stdout)?;
     let mut pools = Vec::new();
 
-    for line in stdout.lines() {
+    for line in zpool_list.lines() {
         let parts = line.split_whitespace().collect::<Vec<_>>();
         if parts.len() < 5 {
             continue;
@@ -57,14 +77,16 @@ async fn zpools() -> Result<Vec<Pool>, anyhow::Error> {
         let size = parts[2].parse().unwrap();
         let alloc = parts[3].parse().unwrap();
         let free = parts[4].parse().unwrap();
-        
-        let status = Command::new("zpool")
+
+        let zpool_status = Command::new("zpool")
             .args(["status", "-PL", &name])
             .output()
             .await?;
-        let status = String::from_utf8(status.stdout)?;
+        let zpool_status = String::from_utf8(zpool_status.stdout)?;
 
-        let disks = zpool_disks(&status).await.unwrap_or_default();
+        let disks = zpool_disks(&zpool_status, &iostat)
+            .await
+            .unwrap_or_default();
 
         let p = Pool {
             name,
@@ -73,7 +95,7 @@ async fn zpools() -> Result<Vec<Pool>, anyhow::Error> {
             alloc,
             free,
             disks,
-            status,
+            status: zpool_status,
         };
         pools.push(p);
     }
@@ -81,15 +103,29 @@ async fn zpools() -> Result<Vec<Pool>, anyhow::Error> {
     Ok(pools)
 }
 
-async fn zpool_disks(status: &str) -> Result<Vec<Disk>, anyhow::Error> {
+async fn zpool_disks(
+    zpool_status: &str,
+    iostat: &Vec<(&str, usize, usize)>,
+) -> Result<Vec<Disk>, anyhow::Error> {
     let mut disks = Vec::new();
 
-    for line in status.lines() {
+    for line in zpool_status.lines() {
         let line = line.trim();
         if line.starts_with("/") {
             let device = line.split_whitespace().next().unwrap().to_owned();
             let spinning = disk_status(&device).await;
-            disks.push(Disk { device, spinning });
+
+            let (kb_read, kb_write) = match iostat.iter().find(|s| device.ends_with(s.0)) {
+                Some((_, kb_read, kb_write)) => (*kb_read, *kb_write),
+                _ => (0, 0),
+            };
+
+            disks.push(Disk {
+                device,
+                spinning,
+                kb_read,
+                kb_write,
+            });
         }
     }
 
