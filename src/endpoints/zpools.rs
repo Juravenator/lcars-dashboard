@@ -115,7 +115,7 @@ async fn zpool_disks(
             let device = line.split_whitespace().next().unwrap().to_owned();
             let spinning = disk_status(&device).await;
 
-            let (kb_read, kb_write) = match iostat.iter().find(|s| device.ends_with(s.0)) {
+            let (kb_read, kb_write) = match iostat.iter().find(|s| device.contains(s.0)) {
                 Some((_, kb_read, kb_write)) => (*kb_read, *kb_write),
                 _ => {
                     println!("WARN: cannot find io stats for device {device}");
