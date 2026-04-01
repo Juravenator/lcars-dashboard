@@ -117,7 +117,18 @@ async fn zpool_disks(
 
             let (kb_read, kb_write) = match iostat.iter().find(|s| device.ends_with(s.0)) {
                 Some((_, kb_read, kb_write)) => (*kb_read, *kb_write),
-                _ => (0, 0),
+                _ => {
+                    println!("WARN: cannot find io stats for device {device}");
+                    println!(
+                        "available devices: {}",
+                        iostat
+                            .iter()
+                            .map(|(s, _, _)| *s)
+                            .collect::<Vec<_>>()
+                            .join(",")
+                    );
+                    (0, 0)
+                }
             };
 
             disks.push(Disk {
