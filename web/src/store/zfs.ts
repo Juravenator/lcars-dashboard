@@ -11,13 +11,15 @@ interface ZpoolStatus {
         disks: {
             device: string,
             spinning: 'STANDBY' | 'ONLINE' | 'UNKNOWN',
+            kb_read: number,
+            kb_write: number,
         }[]
     }[]
 }
 
 export const zfs_data = {
     status: {pools: []} as ZpoolStatus,
-    pool_colors: [] as [number, number, number][],
+    pool_colors: [] as [number, number, number, number][],
     disk_colors: [] as number[][],
 }
 
