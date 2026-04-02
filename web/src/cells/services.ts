@@ -51,13 +51,15 @@ export class Services extends Cell {
                 }
 
                 context.font = "700 20px Antonio,'Arial Narrow','Avenir Next Condensed','sans-serif'";
+                const m_max = unit_width - 24;
                 const m = context.measureText(t);
-                context.fillText(t, current_x + unit_width - m.width - 12, current_y + unit_height - 6);
+                context.fillText(t, current_x + unit_width - Math.min(m.width, m_max) - 12, current_y + unit_height - 6, unit_width - 24);
             }
             {
                 context.font = "16px Antonio,'Arial Narrow','Avenir Next Condensed','sans-serif'";
+                const m_max = unit_width - 24;
                 const m = context.measureText(svc.namespace);
-                context.fillText(svc.namespace, current_x + unit_width - m.width - 12, current_y + unit_height - 6 - 20 - 6);
+                context.fillText(svc.namespace, current_x + unit_width - Math.min(m.width, m_max) - 12, current_y + unit_height - 6 - 20 - 6, unit_width - 24);
             }
             current_x += unit_width + unit_gap;
 
