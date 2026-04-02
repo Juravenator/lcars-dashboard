@@ -30,10 +30,10 @@ const fetch_zpool = () => {
             zfs_data.status = JSON.parse(req.response);
             for (let i = 0; i < zfs_data.status.pools.length; i++) {
                 const pool = zfs_data.status.pools[i]!;
-                zfs_data.pool_colors[i] = zfs_data.pool_colors[i] || [randColorNr(), randColorNr(), randColorNr()];
-                // if (zfs_data.disk_colors[i]?.length != pool.disks.length) {
+                zfs_data.pool_colors[i] = zfs_data.pool_colors[i] || [randColorNr(), randColorNr(), randColorNr(), randColorNr()];
+                if (zfs_data.disk_colors[i]?.length != pool.disks.length) {
                     zfs_data.disk_colors[i] = pool.disks.map(() => randColorNr());
-                // }
+                }
             }
         }
     });
